@@ -38,14 +38,28 @@ public class Dividends {
         InputStreamReader json = new InputStreamReader(url.openStream());
         Gson gson = new Gson();
 
-        //Hay que añadir NullPointerException!!!!
+ 
         //Para extraer los datos necesitamos convertir a JsonObject
         JsonObject dividendData = gson.fromJson(json, JsonObject.class);
+        JsonArray historicalDividends;
+        
+        //En caso de que no haya dividendos, capturamos la excepción creando un array con valor 0:
+        try {
+            historicalDividends = dividendData.get("historical").getAsJsonArray();
+        } catch (NullPointerException e) {
+            JsonArray jobj = new JsonArray();
 
-        String symbol = dividendData.get("symbol").getAsString();
-        System.out.println("Selected stock for dividends: " + symbol);
+            JsonObject item = new JsonObject();
+            item.addProperty("date", "2021-05-10");
+            item.addProperty("label", "May 10, 21");
+            item.addProperty("dividend", 0);
+            
+            jobj.add(item);
 
-        JsonArray historicalDividends = dividendData.get("historical").getAsJsonArray();
+            historicalDividends = jobj;
+        }
+
+        
         return historicalDividends;
     }
 

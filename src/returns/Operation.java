@@ -10,19 +10,26 @@ import static returns.Returns.getPriceDates;
 import static returns.Returns.getPrices;
 
 public class Operation {
-    String sumDividends;
-    String time;
-    String accumulatedReturn;
-    String annualReturn;
-    String initialPrice;
-    String finalPrice;
-    Operation (float initialPrice, float finalPrice, float sumDividends, float time, float accumulatedReturn, float annualReturn){
-        this.initialPrice = Operation.formatEuros(initialPrice);
-        this.finalPrice = Operation.formatEuros(finalPrice);
-        this.sumDividends = Operation.formatEuros(sumDividends);
-        this.time = Operation.formatTime(time);
-        this.accumulatedReturn = Operation.formatReturn(accumulatedReturn);
-        this.annualReturn = Operation.formatReturn(annualReturn);
+    String ticker;
+    String initialDate;
+    String finalDate;
+    float sumDividends;
+    float time;
+    float accumulatedReturn;
+    float annualReturn;
+    float initialPrice;
+    float finalPrice;
+    
+    Operation (String ticker, String initialDate, String finalDate, float initialPrice, float finalPrice, float sumDividends, float time, float accumulatedReturn, float annualReturn){
+        this.ticker = ticker;
+        this.initialDate = initialDate;
+        this.finalDate = finalDate;
+        this.initialPrice = initialPrice;
+        this.finalPrice = finalPrice;
+        this.sumDividends = sumDividends;
+        this.time = time;
+        this.accumulatedReturn = accumulatedReturn;
+        this.annualReturn = annualReturn;
     }
     public static String formatReturn(float rawReturn){
         float formattedReturn = Math.round((rawReturn -1)*100*100);
@@ -34,7 +41,7 @@ public class Operation {
     }
     public static String formatEuros(float amount){
         float formattedAmount = Math.round(amount *100);
-        return formattedAmount/100 + "€ por accion";
+        return formattedAmount/100 + "$ por acción";
     }
     public static Operation calculations(String ticker, String iDateUser, String fDateUser) throws ProtocolException, IOException, ParseException{
         //Obtención de los jsons para precios, dividendos y splits:
@@ -76,7 +83,7 @@ public class Operation {
         System.out.println("Splits: " + Arrays.toString(splits));
         System.out.println("Dividendos ajustados: " + Arrays.toString(adjustedDividends));
         
-        System.out.println("Precio inicial sin ajustar: " + prices[prices.length - 1] + "$ por accion. Precio final sin ajustar: " + prices[0] + "$ por accion");
+        
         System.out.println("Precio ajustado inicial: " + prices[prices.length - 1] + "$ por accion. Precio ajustado final: " + prices[0] + "$ por accion");
         
         System.out.println("Suma de dividendos ajustados = " + sumDividends + "$ por accion");
@@ -84,11 +91,14 @@ public class Operation {
         System.out.println("Rentabilidad acumulada es " + (accumulatedReturn - 1) * 100 + "%");
         System.out.println("Annual return is: " + (annualReturn - 1) * 100 + "%");
         
-        Operation op = new Operation (prices[prices.length - 1], prices[0], sumDividends, time, accumulatedReturn, annualReturn);
+        Operation op = new Operation (ticker, initialDate, finalDate, prices[prices.length - 1], prices[0], sumDividends, time, accumulatedReturn, annualReturn);
         return op;
     }
-    /*public static void main (String [] args) throws IOException, ProtocolException, ParseException{
-        Operation op = Operation.calculations("AAPL", "2011-05-30", "2021-05-20");
-        System.out.println(op.annualReturn);
-    }*/
+    public static void main (String [] args) throws IOException, ProtocolException, ParseException{
+        //Operation op = Operation.calculations("AAPL", "2011-05-30", "2021-05-20");
+        //System.out.println(op.annualReturn);
+        /*float rawReturn = 2;
+        String a = formatReturn(rawReturn);
+        System.out.println(a);*/
+    }
 }

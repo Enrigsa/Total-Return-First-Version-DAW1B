@@ -91,6 +91,8 @@ public class Returns {
     public static float annualReturn(float initialPrice, float finalPrice, float sumDividends, float time) {
         return (float) Math.pow(calculateReturn(initialPrice, finalPrice, sumDividends), 1 / time);
     }
+    
+    
 
     /*public static void main(String[] args) throws MalformedURLException, IOException, ParseException {
         
