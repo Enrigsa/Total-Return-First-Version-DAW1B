@@ -89,7 +89,6 @@ public class Inflation {
             JsonObject obj = (jsonArr.get(i)).getAsJsonObject();
 
             CPIValues[i] = obj.get("value").getAsFloat();
-
         }
         return CPIValues;
     }
@@ -127,7 +126,7 @@ public class Inflation {
             System.err.print("SQLException: " + ex.getMessage());
         }
     }
-
+    
     public static ResultSet executeQuery(String query) {
         PreparedStatement pst = null;
         /* Probar con nueva metodología: https://stackoverflow.com/questions/9291619/jdbc-exception-operation-not-allowed-after-resultset-closed*/
@@ -168,10 +167,7 @@ public class Inflation {
 
     /*Método para obtener la tasa de inflación anual durante un periodo concreto:*/
     public static float getAccumulatedInflation(String initialDate, String finalDate) throws SQLException, ParseException {
-        /* Probar con nueva metodología: https://stackoverflow.com/questions/9291619/jdbc-exception-operation-not-allowed-after-resultset-closed*/
- /*Ver ejemplo: https://es.stackoverflow.com/questions/58252/operation-not-allowed-after-resultset-closed */
         PreparedStatement pst = null;
-        
         //Datos a obtener:
         float accumulatedInflation = 0;
         float finalCPI = 0;
@@ -189,7 +185,6 @@ public class Inflation {
                 finalCPI = (float) rtdo1.getFloat("CPI_LEVEL");
                 finalCPIDate = rtdo1.getString("FIRST_DAY_MONTH");
             }
-
             System.out.println("Debugger 1B");
             con.close();
         } catch (SQLException ex) {

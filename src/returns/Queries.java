@@ -47,14 +47,14 @@ public class Queries {
             String pass = "adminenrigsa";
             //Apertura de conexion:
             Connection con = DriverManager.getConnection(url, user, pass);
-            Statement stmt = con.createStatement();
+            PreparedStatement pst = con.prepareStatement(query1);
             con.setAutoCommit(false);
             //Añadimos todas las setencias del ArrayList a la batería de queries:
 
-            stmt.addBatch(query1);
+            pst.addBatch(query1);
 
             //Recogemos los datos de filas modificadas por cada query y los mostramos:
-            int[] registrosAfectados = stmt.executeBatch();
+            int[] registrosAfectados = pst.executeBatch();
             for (int i = 0; i < registrosAfectados.length; i++) {
                 System.out.println("Filas modificadas: " + registrosAfectados[i]);
             }
