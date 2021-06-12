@@ -19,7 +19,7 @@ import java.io.*;
 import javax.swing.*;
 
 public class Returns {
-
+    //Obtención de arrays de precios:
     public static JsonArray getPriceJsonArray(String ticker, String finalDate, String initialDate)
             throws MalformedURLException, ProtocolException, IOException {
         //Parametros API:
@@ -53,7 +53,7 @@ public class Returns {
 
         return historical;
     }
-
+    //Obtención de precios del array:
     public static float[] getPrices(JsonArray json) {
 
         float[] prices = new float[json.size()];
@@ -63,7 +63,7 @@ public class Returns {
         }
         return prices;
     }
-
+    //Obtención de fechas:
     public static String[] getPriceDates(JsonArray json) {
         String[] priceDates = new String[json.size()];
 
@@ -73,71 +73,22 @@ public class Returns {
         }
         return priceDates;
     }
-
+    //Obtención del precio final:
     public static float getFinalPrice(float[] prices) {
         float finalPrice = prices[0];
         return finalPrice;
     }
-
+    //Obtención del precio inicial:
     public static float getInitialPrice(float[] prices) {
         float initialPrice = prices[prices.length - 1];
         return initialPrice;
     }
-
+    //Cálculo de rentabilida acumulada:
     public static float calculateReturn(float initialPrice, float finalPrice, float sumDividends) {
         return (finalPrice + sumDividends) / initialPrice;
     }
-
+    //Cálculo de rentabilidad anual:
     public static float annualReturn(float initialPrice, float finalPrice, float sumDividends, float time) {
         return (float) Math.pow(calculateReturn(initialPrice, finalPrice, sumDividends), 1 / time);
     }
-    
-    
-
-    /*public static void main(String[] args) throws MalformedURLException, IOException, ParseException {
-        
-      
-        
-        String ticker = "DDS";
-        String fDateUser = "2021-05-10";
-        String iDateUser = "2000-03-07";
-        
-        //Obtención de los jsons para precios, dividendos y splits:
-        JsonArray jsonArr = Returns.getPriceJsonArray(ticker, fDateUser, iDateUser);
-        JsonArray divArr = Dividends.getDividendJsonArray(ticker, fDateUser, iDateUser);
-        JsonArray splitArr = Splits.getSplitJsonArray(ticker, fDateUser, iDateUser);
-        
-
-        //Fechas de los precios final e inicial para calcular el tiempo:
-        String finalDate = Dates.getFinalDate(jsonArr);
-        String initialDate = Dates.getInitialDate(jsonArr);
-        float time = Dates.getDiffInYears(initialDate, finalDate);
-        //Obtención de la lista de precios sin ajustar y sus fechas:
-        float[] prices = getPrices(jsonArr);
-        String[] priceDates = getPriceDates(jsonArr);
-        //Obtención de los dividendos sin ajustar y sus fechas:
-        String[] dividendDates = Dividends.getDividendDates(divArr);
-        float[] dividends = Dividends.getDividends(divArr);
-        //Obtención de los splits para realizar los posteriores ajustes:
-        float[] splits = Splits.getSplits(splitArr);
-        String[] splitDates = Splits.getSplitDates(splitArr);
-
-        
-        //Ajuste de las series de precios y dividendos. Nuevos arrays:
-        float[] adjustedDividends = Splits.adjustForSplits(dividendDates, dividends, splitDates, splits);
-        float[] adjustedPrices = Splits.adjustForSplits(priceDates, prices, splitDates, splits);
-        
-        //Obtención de suma de dividendos:
-        float sumDividends = Dividends.getSumDividends(adjustedDividends);
-        
-        //Calculo de rentabilidades:
-        float accumulatedReturn = Returns.calculateReturn(adjustedPrices[adjustedPrices.length - 1], adjustedPrices[0], sumDividends);
-        float annualReturn = Returns.annualReturn(adjustedPrices[adjustedPrices.length - 1], adjustedPrices[0], sumDividends, time);
-
-        System.out.println("Precio ajustado inicial: " + adjustedPrices[0] + "$ por accion. Precio ajustado final: " + adjustedPrices[1] + "$ por accion");
-        System.out.println("Suma de dividendos ajustados = " + sumDividends + "$ por accion");
-        System.out.println("Periodo de tiempo: " + time + " años");
-        System.out.println("Rentabilidad acumulada es " + (accumulatedReturn - 1) * 100 + "%");
-        System.out.println("Annual return is: " + (annualReturn - 1) * 100 + "%");
-    }*/
 }

@@ -19,7 +19,7 @@ import java.util.Arrays;
 import static returns.Returns.calculateReturn;
 
 public class Inflation {
-
+    //Obtención de json para datos de inflación:
     public static JsonArray getCPIData(String initialDate, String finalDate) throws IOException {
         //Parametros API:
         String baseUrl = "https://api.stlouisfed.org";
@@ -72,6 +72,7 @@ public class Inflation {
         return observations;
     }
 
+    //Obtención de fechas para periodo de inflación:
     public static String[] getCPIDates(JsonArray jsonArr) {
         String[] CPIDates = new String[jsonArr.size()];
         for (int i = 0; i < jsonArr.size(); i++) {
@@ -81,6 +82,7 @@ public class Inflation {
         return CPIDates;
     }
 
+    //Obtención de los datos de IPC:
     public static float[] getInflationValues(JsonArray jsonArr) {
         float[] CPIValues = new float[jsonArr.size()];
         for (int i = 0; i < jsonArr.size(); i++) {
@@ -91,7 +93,8 @@ public class Inflation {
         }
         return CPIValues;
     }
-/*Método para actualizar la tabla con los datos de inflación. Debería ser llamado 
+
+    /*Método para actualizar la tabla con los datos de inflación. Debería ser llamado 
     una vez al mes por el administrador de la base de datos*/
     public static void updateCPITable(String[] CPIDates, float[] CPIValues) {
         try {
@@ -161,35 +164,21 @@ public class Inflation {
                     + ". >>> Error de Conexion 2!!");
         }
         return null;
+    }
 
-    }
-//Método para finalizar conexión a la base de datos:
-    private static void endConnection(Connection conexion) {
-        if (conexion != null) {
-            try {
-                conexion.close();
-                conexion = null;
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage()
-                        + ". >>> Error de Desconexion!!");
-            }
-        }
-    }
-/*Método para obtener la tasa de inflación anual durante un periodo concreto:*/
+    /*Método para obtener la tasa de inflación anual durante un periodo concreto:*/
     public static float getAccumulatedInflation(String initialDate, String finalDate) throws SQLException, ParseException {
-        PreparedStatement pst = null;
-/* Probar con nueva metodología: https://stackoverflow.com/questions/9291619/jdbc-exception-operation-not-allowed-after-resultset-closed*/
-
+        /* Probar con nueva metodología: https://stackoverflow.com/questions/9291619/jdbc-exception-operation-not-allowed-after-resultset-closed*/
  /*Ver ejemplo: https://es.stackoverflow.com/questions/58252/operation-not-allowed-after-resultset-closed */
- 
+        PreparedStatement pst = null;
+        
+        //Datos a obtener:
         float accumulatedInflation = 0;
         float finalCPI = 0;
         float initialCPI = 0;
-
         String finalCPIDate = "";
         String initialCPIDate = "";
         try {
-
             Connection con = iniciarConexion();
             pst = con.prepareStatement("SELECT * FROM CPI_DATA WHERE FIRST_DAY_MONTH <= '"
                     + finalDate + "' ORDER BY FIRST_DAY_MONTH DESC LIMIT 1;");
@@ -202,13 +191,12 @@ public class Inflation {
             }
 
             System.out.println("Debugger 1B");
-            endConnection(con);
+            con.close();
         } catch (SQLException ex) {
             System.err.print("SQLException: " + ex.getMessage());
         }
         //Obtención de valor 
         try {
-
             Connection con = iniciarConexion();
             pst = con.prepareStatement("SELECT * FROM CPI_DATA WHERE FIRST_DAY_MONTH >= '"
                     + initialDate + "' ORDER BY FIRST_DAY_MONTH ASC LIMIT 1;");
@@ -221,33 +209,31 @@ public class Inflation {
                 initialCPIDate = rtdo2.getString("FIRST_DAY_MONTH");
             }
             System.out.println("Debugger 2B");
-
-            endConnection(con);
+            con.close();
         } catch (SQLException ex) {
             System.err.print("SQLException: " + ex.getMessage());
         }
-        
-        //float time = Dates.getDiffInYears(initialCPIDate, finalCPIDate);
-        //annualInflation = (float) Math.pow((finalCPI / initialCPI), 1 / time);
-        
+        //Cálculo rentabilidad acumulada:
         accumulatedInflation = Returns.calculateReturn(initialCPI, finalCPI, 0);
+        //Debugger:
         System.out.println("accumulated inflation is: " + accumulatedInflation);
         return accumulatedInflation;
     }
-    public static float getAnnualInflation(float accumulatedInflation, String initialDate, String finalDate) throws ParseException{
+    //Cálculo de tasa de inflación anual en un periodo de tiempo:
+    public static float getAnnualInflation(float accumulatedInflation, String initialDate, String finalDate) throws ParseException {
         float time = Dates.getDiffInYears(initialDate, finalDate);
-        return (float) Math.pow(accumulatedInflation, 1/time);
+        return (float) Math.pow(accumulatedInflation, 1 / time);
     }
-    
-    public static float realReturn(float nominalReturn, float inflationRate){
+    //Cálculo de rentabilidad real ajustada por inflación:
+    public static float realReturn(float nominalReturn, float inflationRate) {
         return nominalReturn / inflationRate;
     }
-
-    public static void main(String[] args) throws IOException, SQLException, ParseException {
+    
+    /*public static void main(String[] args) throws IOException, SQLException, ParseException {
         JsonArray CPI = Inflation.getCPIData("1970-01-01", "2021-05-20");
         String[] CPIDates = Inflation.getCPIDates(CPI);
         float[] CPIValues = Inflation.getInflationValues(CPI);
         Inflation.updateCPITable(CPIDates, CPIValues);
         Inflation.getAccumulatedInflation("2011-05-01", "2021-05-01");
-    }
+    }*/
 }

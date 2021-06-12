@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.sql.ResultSet;
 
 public class Queries {
-
+    //Recogida de los datos consultados por el cliente para formar un update en la base de datos:
     public static String addStockQuery(Operation op, float accumulatedInflation, float annualInflationRate) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -28,18 +28,18 @@ public class Queries {
         //Falta corregir el formato de la hora actual (ultimo campo).
         return query;
     }
-
+    //Método en construcción:
     public static String addStock() {
         String query = "";
         return query;
     }
-
+    //Método en construcción:
     public static String addClient() {
         String query = "";
         return query;
     }
-
-    public static void executeQueries(String query1) {
+    //Ejecutando update en la base de datos:
+    public static void executingUpdate(String query1) {
         try {
             //Datos para abrir conexion con MySQL:
             String url = "jdbc:mysql://localhost:3306/stockqueries";
@@ -66,11 +66,5 @@ public class Queries {
         } catch (SQLException ex) {
             System.err.print("SQLException: " + ex.getMessage());
         }
-    }
-
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(dtf.format(now));
     }
 }

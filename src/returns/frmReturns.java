@@ -400,17 +400,24 @@ public class frmReturns extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+
+        //Recogida de datos introducidos por el cliente en el formulario:
         String ticker = textTicker.getText();
         String iDateUser = textInitialDate.getText();
         String fDateUser = textFinalDate.getText();
-        
-        
-        
+
         //Es necesario controlar el error de introducción de la fecha. Debe ser más tardía la fecha final.
         try {
+            //Obtención de rentabilidades:
+            Operation calculatedData = Operation.calculations(ticker, iDateUser, fDateUser);
+            //Obtención de datos de inflación:
             float accumulatedInflation = Inflation.getAccumulatedInflation(iDateUser, fDateUser);
             float annualInflation = Inflation.getAnnualInflation(accumulatedInflation, iDateUser, fDateUser);
-            Operation calculatedData = Operation.calculations(ticker, iDateUser, fDateUser);
+            //Obtención de rentabilidades reales ajustadas por inflación:
+            float accumulatedRealReturn = Inflation.realReturn(calculatedData.accumulatedReturn, accumulatedInflation);
+            float annualRealReturn = Inflation.realReturn(calculatedData.annualReturn, annualInflation);
+
+            //Envío de datos al formulario de salida en la interfaz gráfica:
             textInitialPrice.setText(Operation.formatEuros(calculatedData.initialPrice));
             textFinalPrice.setText(Operation.formatEuros(calculatedData.finalPrice));
             textSumDividends.setText(Operation.formatEuros(calculatedData.sumDividends));
@@ -419,13 +426,12 @@ public class frmReturns extends javax.swing.JFrame {
             textAnnualReturn.setText(Operation.formatReturn(calculatedData.annualReturn));
             textAccumulatedInflation.setText(Operation.formatReturn(accumulatedInflation));
             textAnnualInflation.setText(Operation.formatReturn(annualInflation));
-            float accumulatedRealReturn = Inflation.realReturn(calculatedData.accumulatedReturn, accumulatedInflation);
-            float annualRealReturn = Inflation.realReturn(calculatedData.annualReturn, annualInflation);
             textAccumulatedRealReturn.setText(Operation.formatReturn(accumulatedRealReturn));
             textAnnualRealReturn.setText(Operation.formatReturn(annualRealReturn));
-            Queries.executeQueries(Queries.addStockQuery(calculatedData, accumulatedInflation, annualInflation));
-            
-            
+
+            //Envío de los datos consultados a la base de datos:
+            Queries.executingUpdate(Queries.addStockQuery(calculatedData, accumulatedInflation, annualInflation));
+
         } catch (IOException ex) {
             Logger.getLogger(frmReturns.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -434,7 +440,7 @@ public class frmReturns extends javax.swing.JFrame {
             Logger.getLogger(frmReturns.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-            
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void textInitialDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textInitialDateActionPerformed
