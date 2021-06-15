@@ -12,7 +12,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,17 +91,30 @@ public class Inflation {
         }
         return CPIValues;
     }
+    private static void dropCreateCPITable() {
+        try {
+            //Apertura de conexion:
+            Connection con = iniciarConexion();
+            PreparedStatement dropTable = con.prepareStatement("DROP TABLE IF EXISTS CPI_DATA;");
+            PreparedStatement createTable = con.prepareStatement("CREATE TABLE IF NOT EXISTS CPI_DATA ("
+                    + "	FIRST_DAY_MONTH VARCHAR (10), "
+                    + "	CPI_LEVEL FLOAT,"
+                    + "     PRIMARY KEY (FIRST_DAY_MONTH)"
+                    + ");");
+            dropTable.executeUpdate();
+            createTable.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.print("SQLException: " + ex.getMessage());
+        }
+    }
 
     /*Método para actualizar la tabla con los datos de inflación. Debería ser llamado 
     una vez al mes por el administrador de la base de datos*/
-    public static void updateCPITable(String[] CPIDates, float[] CPIValues) {
+    private static void updateCPITable(String[] CPIDates, float[] CPIValues) {
         try {
-            //Datos para abrir conexion con MySQL:
-            String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
-            String user = "root";
-            String pass = "adminenrigsa";
             //Apertura de conexion:
-            Connection con = DriverManager.getConnection(url, user, pass);
+            Connection con = iniciarConexion();
+            dropCreateCPITable();
             PreparedStatement pst = con.prepareStatement("INSERT INTO CPI_DATA (FIRST_DAY_MONTH, CPI_LEVEL) VALUES (?, ?);");
             con.setAutoCommit(false);
             //Añadimos todas las setencias del ArrayList a la batería de queries:
@@ -126,18 +138,14 @@ public class Inflation {
             System.err.print("SQLException: " + ex.getMessage());
         }
     }
-    
+
     public static ResultSet executeQuery(String query) {
         PreparedStatement pst = null;
         /* Probar con nueva metodología: https://stackoverflow.com/questions/9291619/jdbc-exception-operation-not-allowed-after-resultset-closed*/
         ResultSet rtdo = null;
         try {
-            //Datos para abrir conexion con MySQL:
-            String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
-            String user = "root";
-            String pass = "adminenrigsa";
             //Apertura de conexion:
-            Connection con = DriverManager.getConnection(url, user, pass);
+            Connection con = iniciarConexion();
             pst = con.prepareStatement(query);
             con.setAutoCommit(false);
 
@@ -174,6 +182,7 @@ public class Inflation {
         float initialCPI = 0;
         String finalCPIDate = "";
         String initialCPIDate = "";
+        //Obtención de dato final de IPC:
         try {
             Connection con = iniciarConexion();
             pst = con.prepareStatement("SELECT * FROM CPI_DATA WHERE FIRST_DAY_MONTH <= '"
@@ -190,7 +199,7 @@ public class Inflation {
         } catch (SQLException ex) {
             System.err.print("SQLException: " + ex.getMessage());
         }
-        //Obtención de valor 
+        //Obtención de valor inicial de IPC:
         try {
             Connection con = iniciarConexion();
             pst = con.prepareStatement("SELECT * FROM CPI_DATA WHERE FIRST_DAY_MONTH >= '"
@@ -214,21 +223,23 @@ public class Inflation {
         System.out.println("accumulated inflation is: " + accumulatedInflation);
         return accumulatedInflation;
     }
+
     //Cálculo de tasa de inflación anual en un periodo de tiempo:
     public static float getAnnualInflation(float accumulatedInflation, String initialDate, String finalDate) throws ParseException {
         float time = Dates.getDiffInYears(initialDate, finalDate);
         return (float) Math.pow(accumulatedInflation, 1 / time);
     }
+
     //Cálculo de rentabilidad real ajustada por inflación:
     public static float realReturn(float nominalReturn, float inflationRate) {
         return nominalReturn / inflationRate;
     }
-    
-    /*public static void main(String[] args) throws IOException, SQLException, ParseException {
-        JsonArray CPI = Inflation.getCPIData("1970-01-01", "2021-05-20");
+
+    public static void main(String[] args) throws IOException, SQLException, ParseException {
+        JsonArray CPI = Inflation.getCPIData("1970-01-01", "2021-06-20");
         String[] CPIDates = Inflation.getCPIDates(CPI);
         float[] CPIValues = Inflation.getInflationValues(CPI);
         Inflation.updateCPITable(CPIDates, CPIValues);
-        Inflation.getAccumulatedInflation("2011-05-01", "2021-05-01");
-    }*/
+        Inflation.getAccumulatedInflation("2011-05-01", "2021-07-01");
+    }
 }

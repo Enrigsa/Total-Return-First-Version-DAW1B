@@ -41,12 +41,8 @@ public class Queries {
     //Ejecutando update en la base de datos:
     public static void executingUpdate(String query1) {
         try {
-            //Datos para abrir conexion con MySQL:
-            String url = "jdbc:mysql://localhost:3306/stockqueries";
-            String user = "root";
-            String pass = "adminenrigsa";
             //Apertura de conexion:
-            Connection con = DriverManager.getConnection(url, user, pass);
+            Connection con = iniciarConexion();
             PreparedStatement pst = con.prepareStatement(query1);
             con.setAutoCommit(false);
             //Añadimos todas las setencias del ArrayList a la batería de queries:
@@ -66,5 +62,20 @@ public class Queries {
         } catch (SQLException ex) {
             System.err.print("SQLException: " + ex.getMessage());
         }
+    }
+    //Método para iniciar conexión a la base de datos:
+    private static Connection iniciarConexion() {
+        try {
+            String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
+            String user = "root";
+            String pass = "adminenrigsa";
+            //Apertura de conexion:
+            Connection con = DriverManager.getConnection(url, user, pass);
+            return con;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage()
+                    + ". >>> Error de Conexion 2!!");
+        }
+        return null;
     }
 }

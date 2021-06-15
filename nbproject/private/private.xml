@@ -3,14 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/frmReturns.java</file>
             <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Queries.java</file>
+            <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/frmReturns.java</file>
             <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Inflation.java</file>
             <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Returns.java</file>
             <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Operation.java</file>
             <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Dates.java</file>
-            <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Dividends.java</file>
-            <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Splits.java</file>
+            <file>file:/C:/Users/enrig/Documents/NetBeansProjects/Returns/src/returns/Stock.java</file>
         </group>
     </open-files>
 </project-private>

@@ -33,13 +33,9 @@ public class Stock {
         float [] prices = Returns.getPrices(jsonArr);
         String [] priceDates = Returns.getPriceDates(jsonArr);
         
-        try {
-            //Datos para abrir conexion con MySQL:
-            String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
-            String user = "root";
-            String pass = "adminenrigsa";
+        try {       
             //Apertura de conexion:
-            Connection con = DriverManager.getConnection(url, user, pass);
+            Connection con = iniciarConexion();
             PreparedStatement pst = con.prepareStatement("INSERT INTO DDS (DATE_DAY, PRICE) VALUES (?, ?);");
             con.setAutoCommit(false);
            
@@ -64,7 +60,22 @@ public class Stock {
             System.err.print("SQLException: " + ex.getMessage());
         }
     }
-    
+    //Método para iniciar conexión a la base de datos:
+    private static Connection iniciarConexion() {
+        try {
+            String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
+            String user = "root";
+            String pass = "adminenrigsa";
+            //Apertura de conexion:
+            Connection con = DriverManager.getConnection(url, user, pass);
+            return con;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage()
+                    + ". >>> Error de Conexion 2!!");
+        }
+        return null;
+    }
+    //Método main para actualizar datos de stocks. No se interactúa con el usuario:
     public static void main (String [] args) throws IOException{
         Stock.updateDDS("DDS", "2021-06-08", "1995-01-01");
     }
