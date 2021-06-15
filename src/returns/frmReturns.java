@@ -411,8 +411,8 @@ public class frmReturns extends javax.swing.JFrame {
             //Obtención de rentabilidades:
             Operation calculatedData = Operation.calculations(ticker, iDateUser, fDateUser);
             //Obtención de datos de inflación:
-            float accumulatedInflation = Inflation.getAccumulatedInflation(iDateUser, fDateUser);
-            float annualInflation = Inflation.getAnnualInflation(accumulatedInflation, iDateUser, fDateUser);
+            float accumulatedInflation = Inflation.getAccumulatedInflation(calculatedData.initialDate, calculatedData.finalDate);
+            float annualInflation = Inflation.getAnnualInflation(accumulatedInflation, calculatedData.initialDate, calculatedData.finalDate);
             //Obtención de rentabilidades reales ajustadas por inflación:
             float accumulatedRealReturn = Inflation.realReturn(calculatedData.accumulatedReturn, accumulatedInflation);
             float annualRealReturn = Inflation.realReturn(calculatedData.annualReturn, annualInflation);
