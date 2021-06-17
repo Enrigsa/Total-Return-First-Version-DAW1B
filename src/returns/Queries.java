@@ -1,5 +1,6 @@
 package returns;
 
+import returns.gitignore.gitignore;
 import java.sql.*;
 
 import java.security.Timestamp;
@@ -67,8 +68,8 @@ public class Queries {
     private static Connection iniciarConexion() {
         try {
             String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
-            String user = "root";
-            String pass = "adminenrigsa";
+            String user = gitignore.user;
+            String pass = gitignore.pass;
             //Apertura de conexion:
             Connection con = DriverManager.getConnection(url, user, pass);
             return con;

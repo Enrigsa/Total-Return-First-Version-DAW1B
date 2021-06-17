@@ -1,5 +1,6 @@
 package returns;
 
+import returns.gitignore.gitignore;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -19,6 +20,7 @@ import java.io.*;
 import javax.swing.*;
 
 public class Returns {
+
     //Obtención de arrays de precios:
     public static JsonArray getPriceJsonArray(String ticker, String finalDate, String initialDate)
             throws MalformedURLException, ProtocolException, IOException {
@@ -30,9 +32,9 @@ public class Returns {
         String toParam = "&to=";
 
         String api_param = "?apikey=";
-        String api_token = "bd8817f368b307449ba7fba75a15d7db";
+        String api_token = gitignore.api_tokenFM;
         String endpoint = baseUrl + resource + ticker + api_param + api_token + fromParam + initialDate + toParam + finalDate;
-        
+
         URL url = new URL(endpoint);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -46,13 +48,13 @@ public class Returns {
         JsonObject data = gson.fromJson(json, JsonObject.class);
 
         String symbol = data.get("symbol").getAsString();
-        System.out.println(symbol);
 
         JsonArray historical = data.get("historical").getAsJsonArray();
         //System.out.println(historical.toString());
 
         return historical;
     }
+
     //Obtención de precios del array:
     public static float[] getPrices(JsonArray json) {
 
@@ -63,6 +65,7 @@ public class Returns {
         }
         return prices;
     }
+
     //Obtención de fechas:
     public static String[] getPriceDates(JsonArray json) {
         String[] priceDates = new String[json.size()];
@@ -73,20 +76,24 @@ public class Returns {
         }
         return priceDates;
     }
+
     //Obtención del precio final:
     public static float getFinalPrice(float[] prices) {
         float finalPrice = prices[0];
         return finalPrice;
     }
+
     //Obtención del precio inicial:
     public static float getInitialPrice(float[] prices) {
         float initialPrice = prices[prices.length - 1];
         return initialPrice;
     }
+
     //Cálculo de rentabilida acumulada:
     public static float calculateReturn(float initialPrice, float finalPrice, float sumDividends) {
         return (finalPrice + sumDividends) / initialPrice;
     }
+
     //Cálculo de rentabilidad anual:
     public static float annualReturn(float initialPrice, float finalPrice, float sumDividends, float time) {
         return (float) Math.pow(calculateReturn(initialPrice, finalPrice, sumDividends), 1 / time);

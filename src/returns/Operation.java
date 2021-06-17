@@ -94,12 +94,4 @@ public class Operation {
         Operation op = new Operation(ticker, initialDate, finalDate, prices[prices.length - 1], prices[0], sumDividends, time, accumulatedReturn, annualReturn);
         return op;
     }
-
-    public static void main(String[] args) throws IOException, ProtocolException, ParseException {
-        //Operation op = Operation.calculations("AAPL", "2011-05-30", "2021-05-20");
-        //System.out.println(op.annualReturn);
-        /*float rawReturn = 2;
-        String a = formatReturn(rawReturn);
-        System.out.println(a);*/
-    }
 }

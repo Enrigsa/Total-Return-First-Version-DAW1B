@@ -1,5 +1,6 @@
 package returns;
 
+import returns.gitignore.gitignore;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -26,7 +27,7 @@ public class Dividends {
         String toParam = "&to=";
 
         String api_param = "?apikey=";
-        String api_token = "bd8817f368b307449ba7fba75a15d7db";
+        String api_token = gitignore.api_tokenFM;
         String endpoint = baseUrl + resource + ticker + api_param + api_token + fromParam + initialDate + toParam + finalDate;
 
         URL url = new URL(endpoint);
@@ -38,11 +39,10 @@ public class Dividends {
         InputStreamReader json = new InputStreamReader(url.openStream());
         Gson gson = new Gson();
 
- 
         //Para extraer los datos necesitamos convertir a JsonObject
         JsonObject dividendData = gson.fromJson(json, JsonObject.class);
         JsonArray historicalDividends;
-        
+
         //En caso de que no haya dividendos, capturamos la excepción creando un array con valor 0:
         try {
             historicalDividends = dividendData.get("historical").getAsJsonArray();
@@ -53,16 +53,14 @@ public class Dividends {
             item.addProperty("date", "2021-05-10");
             item.addProperty("label", "May 10, 21");
             item.addProperty("dividend", 0);
-            
+
             jobj.add(item);
 
             historicalDividends = jobj;
         }
-
-        
         return historicalDividends;
     }
-
+    //Obtención de la serie de dividendos:
     public static float[] getDividends(JsonArray json) {
         float[] dividends = new float[json.size()];
         for (int i = 0; i < json.size(); i++) {
@@ -89,32 +87,4 @@ public class Dividends {
         }
         return sumDividends;
     }
-
-    /*public static void main(String[] args) throws MalformedURLException, IOException {
-        
-        
-        JsonArray div = Dividends.getDividendJsonArray(ticker, fDateUser, iDateUser);
-        String [] dividendDates = Dividends.getDividendDates(div);
-        float [] dividends = Dividends.getDividends(div);
-        float sumDividends = Dividends.getSumDividends(dividends);
-        
-        
-        System.out.println(Arrays.toString(dividendDates));
-        System.out.println(Arrays.toString(dividends));
-        System.out.println("Suma de dividendos: " + sumDividends);
-
-        JsonArray jobj = new JsonArray();
-        String[] names = new String[]{"date", "label", "numerator", "denominator"};
-
-        JsonObject item = new JsonObject();
-        item.addProperty("date", "2021-05-10");
-        item.addProperty("label", "May 10, 21");
-        item.addProperty("numerator", 1);
-        item.addProperty("denominator", 1);
-        jobj.add(item);
-
-        JsonArray historicalSplits = jobj;
-        System.out.println(jobj.toString());
-    }*/
-
 }

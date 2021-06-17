@@ -1,5 +1,6 @@
 package returns;
 
+import returns.gitignore.gitignore;
 import com.google.gson.JsonArray;
 import java.io.IOException;
 import java.net.ProtocolException;
@@ -64,8 +65,8 @@ public class Stock {
     private static Connection iniciarConexion() {
         try {
             String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
-            String user = "root";
-            String pass = "adminenrigsa";
+            String user = gitignore.user;
+            String pass = gitignore.pass;
             //Apertura de conexion:
             Connection con = DriverManager.getConnection(url, user, pass);
             return con;

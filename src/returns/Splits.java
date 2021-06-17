@@ -1,5 +1,6 @@
 package returns;
 
+import returns.gitignore.gitignore;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -27,24 +28,23 @@ public class Splits {
         String toParam = "&to=";
 
         String api_param = "?apikey=";
-        String api_token = "bd8817f368b307449ba7fba75a15d7db";
+        String api_token = gitignore.api_tokenFM;
         String endpoint = baseUrl + resource + ticker + api_param + api_token + fromParam + initialDate + toParam + finalDate;
-        System.out.println("Splits endpoint: " + endpoint);
-        URL url = new URL(endpoint);
 
+        URL url = new URL(endpoint);
+        
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.connect();
 
         InputStreamReader json = new InputStreamReader(url.openStream());
         Gson gson = new Gson();
-       
-        
+
         //Para extraer los datos necesitamos convertir a JsonObject
         JsonObject splitsData = gson.fromJson(json, JsonObject.class);
         JsonArray historicalSplits;
-        
-         /*Falta controlar un posible error de conexion, en vez de que el json esté vacío. 
+
+        /*Falta controlar un posible error de conexion, en vez de que el json esté vacío. 
         Si la conexion fue correcta, pero está vacío, entonces se crea un array de splits neutro. 
         Pero si no se recibe json por error de conexion o petición, se creará un split neutro cuando no debería*/
         try {
@@ -61,13 +61,10 @@ public class Splits {
 
             historicalSplits = jobj;
         }
-        return historicalSplits ;
+        return historicalSplits;
     }
 
-    
-
-
-public static float[] getSplits(JsonArray json) {
+    public static float[] getSplits(JsonArray json) {
         float[] splits = new float[json.size()];
         for (int i = 0; i < json.size(); i++) {
             JsonObject obj = (json.get(i)).getAsJsonObject();
@@ -120,32 +117,4 @@ public static float[] getSplits(JsonArray json) {
         }
         return splitDates;
     }
-
-    /*public static void main(String[] args) throws MalformedURLException, IOException, ParseException {
-        String ticker = "AAPL";
-        String fDateUser = "2020-03-01";
-        String iDateUser = "2000-03-07";
-
-        JsonArray splitArr = Splits.getSplitJsonArray(ticker, fDateUser, iDateUser);
-        JsonArray div = Dividends.getDividendJsonArray(ticker, fDateUser, iDateUser);
-
-        float[] splits = Splits.getSplits(splitArr);
-        String[] splitDates = Splits.getSplitDates(splitArr);
-
-        String[] dividendDates = Dividends.getDividendDates(div);
-        System.out.println("Fechas dividendos:");
-        System.out.println(Arrays.toString(dividendDates));
-
-        float[] dividends = Dividends.getDividends(div);
-        System.out.println("Dividendos sin ajustar:");
-        System.out.println(Arrays.toString(dividends));
-
-        float[] adjustedDividends = Splits.adjustForSplits(dividendDates, dividends, splitDates, splits);
-
-        System.out.println(Arrays.toString(splitDates));
-        System.out.println(Arrays.toString(splits));
-
-        System.out.println("Dividendos ajustados:");
-        System.out.println(Arrays.toString(adjustedDividends));
-    }*/
 }

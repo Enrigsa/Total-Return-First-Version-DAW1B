@@ -1,5 +1,6 @@
 package returns;
 
+import returns.gitignore.gitignore;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import static returns.Returns.calculateReturn;
 
 public class Inflation {
+
     //Obtención de json para datos de inflación:
     public static JsonArray getCPIData(String initialDate, String finalDate) throws IOException {
         //Parametros API:
@@ -45,7 +47,7 @@ public class Inflation {
         String fixedArguments = "&file_type=json";
 
         String api_param = "?api_key=";
-        String api_token = "18dd4c4e808891aa83ff36a52e43d470";
+        String api_token = gitignore.api_tokenFRED;
 
         String endpoint = baseUrl + resource + api_param + api_token + series_idParam
                 + series_idToken + unitsParam + unitsToken + frequencyParam + frequencyToken
@@ -91,6 +93,8 @@ public class Inflation {
         }
         return CPIValues;
     }
+
+    //Eliminación y nueva creación de la tabla CPI_DATA:
     private static void dropCreateCPITable() {
         try {
             //Apertura de conexion:
@@ -141,7 +145,6 @@ public class Inflation {
 
     public static ResultSet executeQuery(String query) {
         PreparedStatement pst = null;
-        /* Probar con nueva metodología: https://stackoverflow.com/questions/9291619/jdbc-exception-operation-not-allowed-after-resultset-closed*/
         ResultSet rtdo = null;
         try {
             //Apertura de conexion:
@@ -158,11 +161,12 @@ public class Inflation {
         return rtdo;
     }
 //Método para iniciar conexión a la base de datos:
+
     private static Connection iniciarConexion() {
         try {
             String url = "jdbc:mysql://localhost:3306/STOCKQUERIES";
-            String user = "root";
-            String pass = "adminenrigsa";
+            String user = gitignore.user;
+            String pass = gitignore.pass;
             //Apertura de conexion:
             Connection con = DriverManager.getConnection(url, user, pass);
             return con;
@@ -188,13 +192,12 @@ public class Inflation {
             pst = con.prepareStatement("SELECT * FROM CPI_DATA WHERE FIRST_DAY_MONTH <= '"
                     + finalDate + "' ORDER BY FIRST_DAY_MONTH DESC LIMIT 1;");
             ResultSet rtdo1 = pst.executeQuery();
-            System.out.println("Debugger 1A");
+
             //Importante: ¡Sin el while no funcionó la extracción de queries!
             while (rtdo1.next()) {
                 finalCPI = (float) rtdo1.getFloat("CPI_LEVEL");
                 finalCPIDate = rtdo1.getString("FIRST_DAY_MONTH");
             }
-            System.out.println("Debugger 1B");
             con.close();
         } catch (SQLException ex) {
             System.err.print("SQLException: " + ex.getMessage());
@@ -205,14 +208,12 @@ public class Inflation {
             pst = con.prepareStatement("SELECT * FROM CPI_DATA WHERE FIRST_DAY_MONTH >= '"
                     + initialDate + "' ORDER BY FIRST_DAY_MONTH ASC LIMIT 1;");
             ResultSet rtdo2 = pst.executeQuery();
-
-            System.out.println("Debugger 2A");
             //Importante: ¡Sin el while no funcionó la extracción de queries!
             while (rtdo2.next()) {
                 initialCPI = (float) rtdo2.getFloat("CPI_LEVEL");
                 initialCPIDate = rtdo2.getString("FIRST_DAY_MONTH");
             }
-            System.out.println("Debugger 2B");
+            
             con.close();
         } catch (SQLException ex) {
             System.err.print("SQLException: " + ex.getMessage());
@@ -235,11 +236,11 @@ public class Inflation {
         return nominalReturn / inflationRate;
     }
 
-    public static void main(String[] args) throws IOException, SQLException, ParseException {
+    /*public static void main(String[] args) throws IOException, SQLException, ParseException {
         JsonArray CPI = Inflation.getCPIData("1970-01-01", "2021-06-20");
         String[] CPIDates = Inflation.getCPIDates(CPI);
         float[] CPIValues = Inflation.getInflationValues(CPI);
         Inflation.updateCPITable(CPIDates, CPIValues);
         Inflation.getAccumulatedInflation("2011-05-01", "2021-07-01");
-    }
+    }*/
 }
